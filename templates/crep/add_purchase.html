@@ -1,0 +1,48 @@
+{% extends "crep/base.html" %}
+
+{% block extrahead %}
+	<script
+	src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"> </script>
+{% endblock %}
+{% block content %}
+
+<table id="table">
+	<colgroup>
+		<col class="name" />
+		<col class="subtotal" />
+		<col class="math" />
+		<col class="value" />
+		<col class="math" />
+		<col class="value" />
+		<col class="math" />
+		<col class="total" />
+	</colgroup>
+	<thead>
+		<tr>
+			<td/>
+			<td> x </td>
+			<td> + </td>
+			<td> XXX </td>
+			<td> + </td>
+			<td> XXX </td>
+			<td> = </td>
+			<td> TOTAL </td>
+		</tr>
+	</thead>
+	<tbody>
+		{% for user in users %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				<td> {{ user.name }} </td>
+				<td> XXX </td>
+				<td/>
+				<td> XXX </td>
+				<td/>
+				<td> XXX </td>
+				<td/>
+				<td> x </td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}
