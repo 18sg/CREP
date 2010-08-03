@@ -1,48 +1,48 @@
 {% extends "crep/base.html" %}
 
 {% block extrahead %}
-	<script
-	src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"> </script>
+	<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"> </script>
+	<script src="/site_media/purchase.js" type="application/javascript" > </script>
+	<link rel="stylesheet" href="/site_media/purchase.css" type="text/css" media="all" /> 
 {% endblock %}
 {% block content %}
-
-<table id="table">
-	<colgroup>
-		<col class="name" />
-		<col class="subtotal" />
-		<col class="math" />
-		<col class="value" />
-		<col class="math" />
-		<col class="value" />
-		<col class="math" />
-		<col class="total" />
-	</colgroup>
-	<thead>
-		<tr>
-			<td/>
-			<td> x </td>
-			<td> + </td>
-			<td> XXX </td>
-			<td> + </td>
-			<td> XXX </td>
-			<td> = </td>
-			<td> TOTAL </td>
-		</tr>
-	</thead>
-	<tbody>
+<form action="submit" method="post">
+	<select>
 		{% for user in users %}
-			<tr class="{% cycle 'odd' 'even' %}">
-				<td> {{ user.name }} </td>
-				<td> XXX </td>
-				<td/>
-				<td> XXX </td>
-				<td/>
-				<td> XXX </td>
-				<td/>
-				<td> x </td>
-			</tr>
+			<option value="{{user.id}}">{{user.name}}</option>
 		{% endfor %}
-	</tbody>
-</table>
-
+	</select>
+	<table id="table">
+		<colgroup>
+			<col class="name" />
+			<col class="subtotal" />
+			<col class="math" />
+			<col class="value" />
+			<col class="math" />
+			<col class="value" />
+			<col class="math" />
+			<col class="total" />
+		</colgroup>
+		<thead>
+			<tr>
+				<td/>
+				<td class="t" id="t_0" > x </td>
+				<td> = </td>
+				<td> <input id="t_t" value="0" /> </td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr class="w {% cycle 'odd' 'even' %}" id="w_{{user.id}}" >
+					<td> {{ user.name }} </td>
+					<td class="w"> <input id="w_{{ user.id }}_0" value="1" /> </td>
+					<td/>
+					<td class="total"> <input id="w_{{ user.id }}_t" /> </td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<button id="add_col" type="button" > Add Column </button>
+	<input type="submit" />
+</form>
 {% endblock %}

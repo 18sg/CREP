@@ -9,6 +9,7 @@ def optimise_transfers(values, person=lambda v: v[0], ammount=lambda v: v[1]):
 		       == ammount(p))
 	return transfers
 
+
 def canonicalise_transfer(transfer):
 	if transfer[2] >= 0:
 		return transfer

@@ -1,3 +1,4 @@
+from mt import optimise
 from django.http import HttpResponse
 from mt.crep.models import *
 from django.shortcuts import render_to_response, get_object_or_404
@@ -19,3 +20,12 @@ def purchase(request, id):
 def purchase_add(request):
 	users = UserProfile.objects.all()
 	return render_to_response("crep/add_purchase.html", dict(users=users))
+	
+
+def optimal_transfers(request):
+	users = UserProfile.objects.all()
+	transfers = optimise.optimise_transfers(users, 
+	                                        person=lambda p: p, 
+	                                        ammount=lambda p: p.ammount_owed)
+	return render_to_response("crep/optimal_transfers.html",
+	                          dict(transfers=transfers))

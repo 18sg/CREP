@@ -1,0 +1,34 @@
+{% extends "crep/base.html" %}
+
+{% block extrahead %}
+<style type="text/css">
+table   { border-collapse: collapse;
+	text-align: center;
+}
+th { border: 1px solid black }
+td { border: 1px solid grey }
+</style>
+{% endblock%}
+
+{% block content %}
+
+<table>
+	<thead>
+		<tr>
+			<th>From</th>
+			<th>To</th>
+			<th>Ammount</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for transfer in transfers %}
+			<tr>
+				<td>{{transfer.0.name}}</td>
+				<td>{{transfer.1.name}}</td>
+				<td>{{transfer.2}}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock%}
