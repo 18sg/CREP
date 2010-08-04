@@ -16,7 +16,8 @@ var Table = Class.create();
 Table.prototype = {
 	initialize: function(width, height) {
 		this.width = width;
-		this.height = height;
+		this.height = $$("tr.w").length;
+		this.row_names = $$("tr.w").map(function(row){return row.id});
 		this.table = $("table");
 		this.setup_events();
 	},
@@ -31,6 +32,7 @@ Table.prototype = {
 			var on_click = function() {
 				$(this).setValue("1");
 				this.onclick = null;
+				this.calcValues();
 			};
 			var input = new Element("input", {id: row + "_" + col,
 			                                  value: "0"});
@@ -57,14 +59,18 @@ Table.prototype = {
 	},
 	
 	get_input: function(name) {
-		return evenRound(eval($F(name)) * 100)
+		return evenRound(eval($F(name)) * 100);
+	},
+	
+	format_num: function(num) {
+		return (new Number(evenRound(num) / 100)).toFixed(2)
 	},
 	
 	calcValues: function() {
 		total_price = this.get_input("t_t");
 		totals = {};
 		person_totals = {}
-		for (x = 1; x <= this.height; x++)
+		for (x = 0; x < this.height; x++)
 			person_totals[x] = 0;
 		totals[0] = total_price;
 		for (y = 1; y <= this.width; y++)
@@ -72,20 +78,20 @@ Table.prototype = {
 			totals[y] = this.get_input("t_" + y);
 			totals[0] -= totals[y];
 		}
-		$("t_0").innerText = totals[0] / 100;
+		$("t_0").innerText = this.format_num(totals[0]);
 		
 		for (y = 0; y <= this.width; y++)
 		{
 			total_weighting = 0.0;
-			for (x = 1; x <= this.height; x++)
-				total_weighting += this.get_input("w_" + x + "_" + y);
+			for (x = 0; x < this.height; x++)
+				total_weighting += this.get_input(this.row_names[x] + "_" + y);
 			if (total_weighting > 0)
-				for (x = 1; x <= this.height; x++)
+				for (x = 0; x < this.height; x++)
 					person_totals[x] += (totals[y] / total_weighting) 
-						* this.get_input("w_" + x + "_" + y);
+						* this.get_input(this.row_names[x] + "_" + y);
 		}
 		
-		for (x = 1; x <= this.height; x++)
-			$("w_" + x + "_t").setValue(person_totals[x] / 100.0);
+		for (x = 0; x < this.height; x++)
+			$(this.row_names[x] + "_t").setValue(this.format_num(person_totals[x]));
 		}
 	};

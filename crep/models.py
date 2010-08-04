@@ -69,7 +69,7 @@ class Purchase(models.Model):
 class AmmountOwed(models.Model):
 	purchase = models.ForeignKey(Purchase, related_name="ammounts")
 	user = models.ForeignKey(UserProfile, related_name="ammounts_owed")
-	ammount = models.DecimalField(max_digits=6, decimal_places=2)
+	ammount = models.IntegerField()
 	
 	
 	def __unicode__(self):

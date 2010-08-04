@@ -1,17 +1,29 @@
 {% extends "crep/base.html" %}
 
 {% block extrahead %}
-	<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"> </script>
+	<script src="/site_media/prototype.js"> </script>
 	<script src="/site_media/purchase.js" type="application/javascript" > </script>
 	<link rel="stylesheet" href="/site_media/purchase.css" type="text/css" media="all" /> 
 {% endblock %}
 {% block content %}
-<form action="submit" method="post">
-	<select>
-		{% for user in users %}
-			<option value="{{user.id}}">{{user.name}}</option>
-		{% endfor %}
-	</select>
+<form action="submit/" method="post">
+	{% csrf_token %}
+	<p>
+		<label for="title">Title:</label>
+		<input name="title" type="text" id="title"/> 
+	</p>
+	<p>
+		<label for="description">Description:</label>
+		<textarea name="description" id="description" rows="10" cols="40"></textarea>
+	</p>
+	<p>
+		<label for="purchaser">Purchaser:</label>
+		<select name="purchaser" id="purchaser" size="1" >
+			{% for user in users %}
+				<option value="{{user.id}}">{{user.name}}</option>
+			{% endfor %}
+		</select>
+	</p>
 	<table id="table">
 		<colgroup>
 			<col class="name" />
@@ -37,12 +49,14 @@
 					<td> {{ user.name }} </td>
 					<td class="w"> <input id="w_{{ user.id }}_0" value="1" /> </td>
 					<td/>
-					<td class="total"> <input id="w_{{ user.id }}_t" /> </td>
+					<td class="total"> <input id="w_{{ user.id }}_t" name="w_{{ user.id }}_t" /> </td>
 				</tr>
 			{% endfor %}
 		</tbody>
 	</table>
-	<button id="add_col" type="button" > Add Column </button>
-	<input type="submit" />
+	<p>
+		<button id="add_col" type="button" > Add Column </button>
+		<input type="submit" />
+	</p>
 </form>
 {% endblock %}
