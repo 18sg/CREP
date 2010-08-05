@@ -25,23 +25,24 @@ def find_simple_transfers(group, ammount):
 	else:
 		return None
 
+def make_transfers(ordered_group):
+	last_transfer = 0.0
+	for sender, recipient in zip(sorted_group[:-1], sorted_group[1:]):
+		transfer = (-ammount(sender)) + last_transfer
+		yield canonicalise_transfer((sender, recipient, transfer))
+		last_transfer = transfer
+
+def cost(transfers):
+	return sum(abs(t[2] for t in transfers))
 
 def _optimise_transfers(values, person, ammount):
 	for group in find_transfer_groups(values, ammount):
 		transfers = find_simple_transfers(group, ammount)
 		if transfers is not None:
-			for t in transfers:
-				yield t
+			return transfers
 		else:
-			sorted_group = (sorted((v for v in group if ammount(v) <= 0), 
-			                       key=lambda x: -ammount(x))
-			                + sorted((v for v in group if ammount(v) > 0), 
-			                         key=lambda x: -ammount(x)))
-			last_transfer = 0.0
-			for sender, recipient in zip(sorted_group[:-1], sorted_group[1:]):
-				transfer = (-ammount(sender)) + last_transfer
-				yield (sender, recipient, transfer)
-				last_transfer = transfer
+			return min(map(make_transfers, itertools.permutations(group)),
+			           key=cost)
 
 
 
