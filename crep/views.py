@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.core.context_processors import csrf
 from mt.crep.models import *
 from django.shortcuts import render_to_response, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
 import math
 from decimal import Decimal
 
@@ -10,16 +12,19 @@ def index(request):
 	return render_to_response("crep/index.html", {})
 
 
+@login_required
 def user(request, username):
 	user = User.objects.get(username=username)
 	return HttpResponse("User: %s" % len(user.transactions_sent.all()))
 
 
+@login_required
 def purchase(request, id):
 	purchase = get_object_or_404(Purchase, id=id)
 	return HttpResponse(repr(dir(purchase)))
 
 
+@login_required
 def purchase_add(request):
 	users = UserProfile.objects.all()
 	c = dict(users=users)
@@ -27,6 +32,7 @@ def purchase_add(request):
 	return render_to_response("crep/add_purchase.html", c)
 
 
+@login_required
 def purchase_add_submit(request):
 	purchase = Purchase(title=request.POST["title"],
 	                    description=request.POST["description"],
@@ -38,6 +44,7 @@ def purchase_add_submit(request):
 		ao.save()
 	return HttpResponse("Done!")
 
+@login_required
 def optimal_transfers(request):
 	users = UserProfile.objects.all()
 	transfers = optimise.optimise_transfers([(u, u.ammount_owed) for u in users])
