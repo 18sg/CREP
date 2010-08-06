@@ -1,6 +1,11 @@
 # coding: utf8
 from django.db import models
 from django.contrib.auth.models import User
+from decimal import  Decimal
+
+def money_format(ammount):
+	d = Decimal(ammount)
+	return u'£%s' % (d / 100)
 
 class UserProfile(models.Model):
 	
@@ -43,12 +48,12 @@ class Transaction(models.Model):
 	                              related_name="transactions_recieved")
 	sent = models.BooleanField()
 	recieved = models.BooleanField()
-	ammount = models.DecimalField(max_digits=6, decimal_places=2)
+	ammount = models.IntegerField()
 	
 	def __unicode__(self):
-		return u"£%d from %s to %s" % (self.ammount,
-		                               self.sender.name,
-		                               self.recipient.name)
+		return u"%s from %s to %s" % (money_format(self.ammount),
+		                              self.sender.name,
+		                              self.recipient.name)
 
 
 
@@ -62,7 +67,9 @@ class Purchase(models.Model):
 		return sum(ammount.ammount for ammount in self.ammounts.all())
 	
 	def __unicode__(self):
-		return u"%s for £%s by %s" % (self.title, self.total, self.purchaser.name)
+		return u"%s for %s by %s" % (self.title,
+		                             money_format(self.total),
+		                             self.purchaser.name)
 
 
 
@@ -73,4 +80,4 @@ class AmmountOwed(models.Model):
 	
 	
 	def __unicode__(self):
-		return u"%s owes £%s for '%s'" % (self.user, self.ammount, self.purchase)
+		return u"%s owes %s for '%s'" % (self.user, money_format(self.ammount), self.purchase)

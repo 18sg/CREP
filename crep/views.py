@@ -42,5 +42,6 @@ def optimal_transfers(request):
 	users = UserProfile.objects.all()
 	transfers = optimise.optimise_transfers([(u, u.ammount_owed) for u in users])
 	return render_to_response("crep/optimal_transfers.html",
-	                          dict(transfers=transfers))
+	                          dict(transfers=[(t[0], t[1], money_format(t[2]))
+	                               for t in transfers]))
 
