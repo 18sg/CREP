@@ -40,9 +40,7 @@ def purchase_add_submit(request):
 
 def optimal_transfers(request):
 	users = UserProfile.objects.all()
-	transfers = optimise.optimise_transfers(users, 
-	                                        person=lambda p: p, 
-	                                        ammount=lambda p: p.ammount_owed)
+	transfers = optimise.optimise_transfers([(u, u.ammount_owed) for u in users])
 	return render_to_response("crep/optimal_transfers.html",
 	                          dict(transfers=transfers))
 
