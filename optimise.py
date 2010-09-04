@@ -1,4 +1,6 @@
 import itertools
+from mst import mst
+from pprint import pprint
 
 def optimise_transfers(values, person=lambda v: v[0], ammount=lambda v: v[1]):
 	assert(sum(map(ammount, values)) == 0)
@@ -37,12 +39,37 @@ def cost(transfers):
 	return sum(abs(t[2]) for t in transfers)
 
 
+def find_transfers(nodes, edges, start_node=None, already_visited=None):
+	start_node = start_node or nodes[0]
+	already_visited = (already_visited or []) + [start_node]
+	next_nodes = ([e[1] for e in edges if e[0] == start_node and e[1] not in already_visited] + 
+	              [e[0] for e in edges if e[1] == start_node and e[0] not in already_visited])
+	if not next_nodes:
+		return (start_node[1], [])
+	
+	total_value = 0
+	all_transfers = []
+	for next_node in next_nodes:
+		value, transfers = find_transfers(nodes, edges, next_node, already_visited)
+		total_value += value
+		all_transfers.extend(transfers)
+		all_transfers.append(canonicalise_transfer((start_node, next_node, value)))
+	total_value += start_node[1]
+	return (total_value, all_transfers)
+
+def find_optimal_transfer(values, person, ammount):
+	nodes = [(person(v), ammount(v)) for v in values]
+	edges = [(a, b, abs(a[1] + b[1])) for (a, b) in itertools.permutations(nodes, 2)]
+	assert(value == 0)
+	return [(t[0][0], t[1][0], t[2]) for t in transfers]
+
 def _optimise_transfers(values, person, ammount):
 	for group in find_transfer_groups(values, ammount):
 		all_transfers = []
 		all_transfers.extend(find_simple_transfers(group, person, ammount))
 		all_transfers.extend(list(make_transfers(g, person, ammount))
 		                     for g in itertools.permutations(group))
+		all_transfers.append(find_optimal_transfer(group, person, ammount))
 		transfers = min(all_transfers, key=cost)
 		for transfer in transfers:
 			yield transfer
