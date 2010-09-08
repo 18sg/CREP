@@ -1,6 +1,7 @@
 import itertools
 from mst import mst
 from pprint import pprint
+import lp
 
 def optimise_transfers(values, person=lambda v: v[0], ammount=lambda v: v[1]):
 	assert(sum(map(ammount, values)) == 0)
@@ -65,12 +66,13 @@ def find_optimal_transfer(values, person, ammount):
 
 def _optimise_transfers(values, person, ammount):
 	for group in find_transfer_groups(values, ammount):
-		all_transfers = []
-		all_transfers.extend(find_simple_transfers(group, person, ammount))
-		all_transfers.extend(list(make_transfers(g, person, ammount))
-		                     for g in itertools.permutations(group))
-		all_transfers.append(find_optimal_transfer(group, person, ammount))
-		transfers = min(all_transfers, key=cost)
+		# all_transfers = []
+		# all_transfers.extend(find_simple_transfers(group, person, ammount))
+		# all_transfers.extend(list(make_transfers(g, person, ammount))
+		#                      for g in itertools.permutations(group))
+		# all_transfers.append(find_optimal_transfer(group, person, ammount))
+		# transfers = min(all_transfers, key=cost)
+		transfers = lp.solve(group)
 		for transfer in transfers:
 			yield transfer
 
