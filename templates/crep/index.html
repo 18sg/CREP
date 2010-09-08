@@ -1,5 +1,51 @@
 {% extends "crep/base.html" %}
 
 {% block content %}
-Hello, World
+<p>
+	You are owed {{ammount_owed}}.
+</p>
+
+<form action="add_transfer/" method="post">
+	{% csrf_token %}
+	<input type="hidden" name="unit" value="pounds" />
+	I have transfered £<input name="ammount" type="text"/> to 
+	<select name="to">
+		{% for user in users %}
+			<option value="{{user.id}}">{{user.name}}</option>
+		{% endfor %}
+	</select>.
+	<input type="submit" />
+</form>
+
+<h2>suggested transfers</h2>
+<h3>from you</h2>
+<ul>
+	{% for transfer in suggested_from_transfers %}
+		<li>{{transfer}} <a href="add_transfer?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}">done</a></li>
+	{% endfor %}
+</ul>
+
+<h3>to you</h3>
+<ul>
+	{% for transfer in suggested_to_transfers %}
+		<li>{{transfer}}</li>
+	{% endfor %}
+</ul>
+
+<h2>pending transfers</h2>
+<h3>from you</h2>
+<ul>
+	{% for transfer in from_transfers %}
+		<li>{{transfer}} <a href="cancel_transfer?id={{transfer.id}}">cancel</a></li>
+	{% endfor %}
+</ul>
+
+<h3>to you</h3>
+<ul>
+	{% for transfer in to_transfers %}
+		<li>{{transfer}} <a href="confirm_transfer?id={{transfer.id}}">confirm</a></li>
+	{% endfor %}
+</ul>
+
+
 {% endblock %}

@@ -2,10 +2,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from decimal import  Decimal
+import optimise
 
 def money_format(ammount):
 	d = Decimal(ammount)
 	return u'£%s' % (d / 100)
+
+def money_parse(ammount):
+	return int(Decimal(ammount) * 100)
 
 class UserProfile(models.Model):
 	
@@ -28,7 +32,6 @@ class UserProfile(models.Model):
 		return (self.ammount_owed 
 		        - sum(t.ammount for t in self.transactions_recieved.all())
 		        + sum(t.ammount for t in self.transactions_sent.all()))
-	
 	
 	def __unicode__(self):
 		return unicode(self.user)
@@ -55,6 +58,30 @@ class Transaction(models.Model):
 		                              self.sender.name,
 		                              self.recipient.name)
 
+def regenerate_transaction_cache(sender, instance, signal, *args, **kwargs):
+	print "regenerating transfers..."
+	TransactionCache.objects.all().delete()
+	users = UserProfile.objects.all()
+	transfers = optimise.optimise_transfers([(u, u.ammount_owed_current) for u in users])
+	
+	for sender, recipient, ammount in transfers:
+		t = TransactionCache(sender=sender,
+		                      recipient=recipient,
+		                      ammount=ammount)
+		t.save()
+
+
+class TransactionCache(models.Model):
+	sender = models.ForeignKey(UserProfile, 
+	                           related_name="transaction_cache_sent")
+	recipient = models.ForeignKey(UserProfile, 
+	                              related_name="transaction_cache_recieved")
+	ammount = models.IntegerField()
+	
+	def __unicode__(self):
+		return u"%s from %s to %s" % (money_format(self.ammount),
+		                              self.sender.name,
+		                              self.recipient.name)
 
 
 class Purchase(models.Model):
@@ -81,3 +108,11 @@ class AmmountOwed(models.Model):
 	
 	def __unicode__(self):
 		return u"%s owes %s for '%s'" % (self.user, money_format(self.ammount), self.purchase)
+
+
+for c in [Transaction, Purchase, AmmountOwed, UserProfile]:
+	models.signals.post_save.connect(regenerate_transaction_cache, sender=c)
+	models.signals.post_delete.connect(regenerate_transaction_cache, sender=c)
+
+
+
