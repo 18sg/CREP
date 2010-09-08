@@ -18,7 +18,7 @@
 </form>
 
 <h2>suggested transfers</h2>
-<h3>from you</h2>
+<h3>from you</h3>
 <ul>
 	{% for transfer in suggested_from_transfers %}
 		<li>{{transfer}} <a href="add_transfer?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}">done</a></li>
@@ -33,7 +33,7 @@
 </ul>
 
 <h2>pending transfers</h2>
-<h3>from you</h2>
+<h3>from you</h3>
 <ul>
 	{% for transfer in from_transfers %}
 		<li>{{transfer}} <a href="cancel_transfer?id={{transfer.id}}">cancel</a></li>
