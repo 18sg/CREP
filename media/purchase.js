@@ -28,11 +28,12 @@ Table.prototype = {
 	},
 	
 	add_col: function() {
+		var table = this;
 		var make_elem = function(row, col) {
 			var on_click = function() {
 				$(this).setValue("1");
 				this.onclick = null;
-				this.calcValues();
+				table.calcValues();
 			};
 			var input = new Element("input", {id: row + "_" + col,
 			                                  value: "0"});
