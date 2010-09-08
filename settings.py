@@ -75,7 +75,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'mt.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
 	"templates"
@@ -88,7 +88,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-    'mt.crep'
+    'crep'
 )
 
 AUTH_PROFILE_MODULE = 'crep.UserProfile'

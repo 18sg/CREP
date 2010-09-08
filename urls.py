@@ -4,7 +4,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-from mt import crep
+import crep
 
 urlpatterns = patterns('',
     # Example:
@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     
-    (r'^crep/', include("mt.crep.urls")),
+    (r'^crep/', include("crep.urls")),
     (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': 'media'}),

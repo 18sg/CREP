@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns("mt.crep.views",
+urlpatterns = patterns("crep.views",
 	(r'^$', "index"),
 	(r'^add_transfer/$', "add_transfer"),
 	(r'^cancel_transfer$', "cancel_transfer"),

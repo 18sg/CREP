@@ -1,4 +1,4 @@
-from mt.crep.models import *
+from crep.models import *
 from django.contrib import admin
 
 class UserProfileAdmin(admin.ModelAdmin):
