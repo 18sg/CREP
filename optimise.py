@@ -1,6 +1,5 @@
 import itertools
 from mst import mst
-from pprint import pprint
 import lp
 
 def optimise_transfers(values, person=lambda v: v[0], ammount=lambda v: v[1]):

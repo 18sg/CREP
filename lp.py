@@ -24,7 +24,6 @@ def solve(values):
 		         sum([t[1] for t in all_transfers if t[0][0] == v])) == v[1]
 	# prob.writeLP("test.lp")
 	status = prob.solve()
-	# print pulp.LpStatus[status]
 	return [(t[0][0], t[1][0], int(pulp.value(v))) for t, v in all_transfers if int(pulp.value(v)) != 0]
 
 

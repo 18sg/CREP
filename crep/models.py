@@ -59,7 +59,6 @@ class Transaction(models.Model):
 		                              self.recipient.name)
 
 def regenerate_transaction_cache(sender, instance, signal, *args, **kwargs):
-	print "regenerating transfers..."
 	TransactionCache.objects.all().delete()
 	users = UserProfile.objects.all()
 	transfers = optimise.optimise_transfers([(u, u.ammount_owed_current) for u in users])
