@@ -93,8 +93,8 @@ def purchase_add(request):
 
 @login_required
 def purchase_add_submit(request):
-	purchase = Purchase(title=request.REQUEST["title"],
-	                    description=request.REQUEST["description"],
+	purchase = Purchase(title=request.REQUEST.get("title", ""),
+	                    description=request.REQUEST.get("description", ""),
 	                    purchaser=UserProfile.objects.get(id=int(request.POST["purchaser"])))
 	purchase.save()
 	for user in UserProfile.objects.all():
