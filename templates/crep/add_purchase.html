@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <a href="/">Home</a>
-<form action="submit/" method="post">
+<form id="add_purchase_form" action="submit/" method="post">
 	{% csrf_token %}
 	<!--
 	<p>

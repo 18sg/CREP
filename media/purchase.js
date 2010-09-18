@@ -3,6 +3,12 @@ document.observe("dom:loaded", function(){
 	table.calcValues();
 	
 	$("add_col").onclick = table.add_col.bind(table);
+	
+	// prevent the form from sending when Return key is pressed
+	Event.observe('add_purchase_form', 'keydown', function(event) {
+		if (event.keyCode == 13)
+			event.stop();
+	});
 });
 
 function evenRound(num) {
