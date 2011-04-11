@@ -1,5 +1,6 @@
 # coding: utf8
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from decimal import  Decimal
 import optimise
@@ -23,15 +24,17 @@ class UserProfile(models.Model):
 	
 	@property
 	def ammount_owed(self):
-		return (sum(p.total for p in self.purchases.all()) 
-		        - sum(a.ammount for a in self.ammounts_owed.all())) 
+		return (AmmountOwed.objects
+		                    .filter(purchase__purchaser=self)
+		                    .aggregate(s=Sum("ammount"))["s"]
+		        - self.ammounts_owed.aggregate(s=Sum("ammount"))["s"])
 	
 	
 	@property
 	def ammount_owed_current(self):
 		return (self.ammount_owed 
-		        - sum(t.ammount for t in self.transactions_recieved.all())
-		        + sum(t.ammount for t in self.transactions_sent.all()))
+		        - self.transactions_recieved.aggregate(s=Sum("ammount"))["s"]
+		        + self.transactions_sent.aggregate(s=Sum("ammount"))["s"])
 	
 	def __unicode__(self):
 		return unicode(self.user)
@@ -90,7 +93,7 @@ class Purchase(models.Model):
 	
 	@property
 	def total(self):
-		return sum(ammount.ammount for ammount in self.ammounts.all())
+		return self.ammounts.aggregate(s=Sum("ammount"))["s"]
 	
 	def __unicode__(self):
 		return u"%s for %s by %s" % (self.title,
