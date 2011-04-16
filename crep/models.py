@@ -40,7 +40,7 @@ class UserProfile(models.Model):
 	
 	@property
 	def name(self):
-		return self.user.username
+		return self.user.first_name or self.user.username
 	
 	
 	@property
