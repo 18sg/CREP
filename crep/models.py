@@ -7,25 +7,33 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 import optimise
 from crep.money import money_format
-import json
+import cPickle as pickle
 
 
 class Variable(models.Model):
 	
 	key = models.CharField(max_length=30, primary_key=True)
-	value = models.TextField()
+	pickle_value = models.TextField()
+	
+	@property
+	def value(self):
+		return pickle.loads(str(self.pickle_value))
+	
+	@value.setter
+	def value(self, value):
+		self.pickle_value = pickle.dumps(value)
 	
 	@classmethod
 	def get(klass, key, default=None):
 		try:
-			return json.loads(klass.objects.get(key=key).value)
+			return klass.objects.get(key=key).value
 		except ObjectDoesNotExist:
 			return default
 	
 	@classmethod
 	def set(klass, key, value):
 		var = klass.objects.get_or_create(key=key)[0]
-		var.value = json.dumps(value)
+		var.value = value
 		var.save()
 	
 	@classmethod
@@ -33,7 +41,7 @@ class Variable(models.Model):
 		klass.objects.get(key=key).delete()
 	
 	def __unicode__(self):
-		return "%s = %s" % (self.key, json.loads(self.value))
+		return "%s = %s" % (self.key, self.value)
 
 
 class UserProfile(models.Model):
