@@ -1,16 +1,37 @@
 # coding: utf8
 from django.db import models
 from django.db.models import Sum
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.signals import request_started
+from django.dispatch import receiver
 from django.contrib.auth.models import User
-from decimal import  Decimal
 import optimise
+from crep.money import money_format
+import json
 
-def money_format(ammount):
-	d = Decimal(ammount)
-	return u'£%s' % (d / 100)
 
-def money_parse(ammount):
-	return int(Decimal(ammount) * 100)
+class Variable(models.Model):
+	
+	key = models.CharField(max_length=30, primary_key=True)
+	value = models.TextField()
+	
+	@classmethod
+	def get(klass, key, default=None):
+		try:
+			return json.loads(klass.objects.get(key=key).value)
+		except ObjectDoesNotExist:
+			return default
+	
+	@classmethod
+	def set(klass, key, value):
+		var = klass.objects.get_or_create(key=key)[0]
+		var.value = json.dumps(value)
+		var.save()
+	
+	@classmethod
+	def delete(klass, key):
+		klass.objects.get(key=key).delete()
+
 
 class UserProfile(models.Model):
 	
@@ -61,17 +82,6 @@ class Transaction(models.Model):
 		                              self.sender.name,
 		                              self.recipient.name)
 
-def regenerate_transaction_cache(sender, instance, signal, *args, **kwargs):
-	TransactionCache.objects.all().delete()
-	users = UserProfile.objects.all()
-	transfers = optimise.optimise_transfers([(u, u.ammount_owed_current) for u in users])
-	
-	for sender, recipient, ammount in transfers:
-		t = TransactionCache(sender=sender,
-		                      recipient=recipient,
-		                      ammount=ammount)
-		t.save()
-
 
 class TransactionCache(models.Model):
 	sender = models.ForeignKey(UserProfile, 
@@ -79,6 +89,31 @@ class TransactionCache(models.Model):
 	recipient = models.ForeignKey(UserProfile, 
 	                              related_name="transaction_cache_recieved")
 	ammount = models.IntegerField()
+	
+	@classmethod
+	def set_dirty(klass, *args, **kwargs):
+		Variable.set("transaction_cache_dirty", True)
+	
+	@classmethod
+	def regenerate(klass):
+		TransactionCache.objects.all().delete()
+		users = UserProfile.objects.all()
+		transfers = optimise.optimise_transfers([(u, u.ammount_owed_current) for u in users])
+		
+		for sender, recipient, ammount in transfers:
+			t = TransactionCache(sender=sender,
+			                      recipient=recipient,
+			                      ammount=ammount)
+			t.save()
+		
+	
+	@receiver(request_started)
+	def regen_if_dirty(sender, **kwargs):
+		# Guard against cuncurrent access by regenerating again.
+		while Variable.get("transaction_cache_dirty", True):
+			Variable.set("transaction_cache_dirty", False)
+			TransactionCache.regenerate()
+	
 	
 	def __unicode__(self):
 		return u"%s from %s to %s" % (money_format(self.ammount),
@@ -113,8 +148,8 @@ class AmmountOwed(models.Model):
 
 
 for c in [Transaction, Purchase, AmmountOwed, UserProfile]:
-	models.signals.post_save.connect(regenerate_transaction_cache, sender=c)
-	models.signals.post_delete.connect(regenerate_transaction_cache, sender=c)
+	models.signals.post_save.connect(TransactionCache.set_dirty, sender=c)
+	models.signals.post_delete.connect(TransactionCache.set_dirty, sender=c)
 
 
 

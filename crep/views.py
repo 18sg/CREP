@@ -2,6 +2,7 @@ import optimise
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.context_processors import csrf
 from crep.models import *
+from crep.money import money_format, money_parse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
@@ -53,6 +54,7 @@ def add_transfer(request):
 	transaction.save()
 	return return_to_previous(request)
 
+
 @login_required
 def cancel_transfer(request):
 	user = get_user_profile(request)
@@ -68,7 +70,6 @@ def confirm_transfer(request):
 	transfer.recieved = True
 	transfer.save()
 	return return_to_previous(request)
-
 
 
 @login_required
@@ -103,11 +104,9 @@ def purchase_add_submit(request):
 		ao.save()
 	return return_to_previous(request)
 
+
 @login_required
 def optimal_transfers(request):
-	users = UserProfile.objects.all()
-	transfers = optimise.optimise_transfers([(u, u.ammount_owed_current) for u in users])
 	return render_to_response("crep/optimal_transfers.html",
-	                          dict(transfers=[(t[0], t[1], money_format(t[2]))
-	                               for t in transfers]))
+	                          dict(transfers=TransactionCache.objects.all()))
 
