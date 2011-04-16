@@ -6,4 +6,4 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register([Transaction, Purchase, AmmountOwed, TransactionCache])
+admin.site.register([Transaction, Purchase, AmmountOwed, TransactionCache, Variable])

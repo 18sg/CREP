@@ -31,6 +31,9 @@ class Variable(models.Model):
 	@classmethod
 	def delete(klass, key):
 		klass.objects.get(key=key).delete()
+	
+	def __unicode__(self):
+		return "%s = %s" % (self.key, json.loads(self.value))
 
 
 class UserProfile(models.Model):
