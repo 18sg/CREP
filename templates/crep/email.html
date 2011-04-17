@@ -1,0 +1,29 @@
+{% load money %}
+{% load time_format %}
+<p>
+Hello,
+</p>
+
+<p>
+This is an (actually automated) email from the (currently beta-testing) CREP (CREP Reasonable Expected Payments) system for the payments from <b>{{from|strftime:"%d %b %Y"}}</b> to <b>{{to|strftime:"%d %b %Y"}}</b>.
+</p>
+
+<p>
+The following is an optimised list of the transfers that must be made for everyone to be even:
+</p>
+
+<p>
+<ul>
+{% for t in transfers %}
+<li>{{t.sender.name}} must pay {{t.recipient.name}} <b>{{t.ammount|money_format}}</b></li>
+{% endfor %}
+</ul>
+</p>
+
+<p>
+Yours lovingly,
+</p>
+
+<p>
+The CREP Server
+</p>

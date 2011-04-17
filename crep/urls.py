@@ -9,5 +9,6 @@ urlpatterns = patterns("crep.views",
 	(r'^purchase/add/$', "purchase_add"),
 	(r'^purchase/add/submit/$', "purchase_add_submit"),
 	(r'^purchase/(?P<id>\d+)/$', "purchase"),
-	(r'^optimal_transfers/$', "optimal_transfers")
+	(r'^optimal_transfers/$', "optimal_transfers"),
+	(r'^email/$', "email"),
 )

@@ -10,6 +10,7 @@ from django.contrib.auth import get_user
 
 import math
 from decimal import Decimal
+import time
 
 
 def get_user_profile(request):
@@ -110,3 +111,10 @@ def optimal_transfers(request):
 	return render_to_response("crep/optimal_transfers.html",
 	                          dict(transfers=TransactionCache.objects.all()))
 
+@login_required
+def email(request):
+	vars = {}
+	vars["from"] = time.localtime()
+	vars["to"] = time.localtime()
+	vars["transfers"] = TransactionCache.objects.all()
+	return render_to_response("crep/email.html", vars)
