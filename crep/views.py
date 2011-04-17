@@ -28,7 +28,7 @@ def index(request):
 	suggested_to_transfers = TransactionCache.objects.filter(recipient=user)
 	
 	c = dict(users=UserProfile.objects.all(),
-	         ammount_owed=money_format(user.ammount_owed_current),
+	         user=user,
 	         to_transfers=to_transfers,
 	         from_transfers=from_transfers,
 	         suggested_from_transfers=suggested_from_transfers,
@@ -54,17 +54,17 @@ def add_transfer(request):
 
 
 @login_required
-def cancel_transfer(request):
+def cancel_transfer(request, id):
 	user = get_user_profile(request)
-	transfer = get_object_or_404(Transaction, id=request.REQUEST["id"], sender=user)
+	transfer = get_object_or_404(Transaction, id=int(id), sender=user)
 	transfer.delete()
 	return return_to_previous(request)
 
 
 @login_required
-def confirm_transfer(request):
+def confirm_transfer(request, id):
 	user = get_user_profile(request)
-	transfer = get_object_or_404(Transaction, id=request.REQUEST["id"], recipient=user)
+	transfer = get_object_or_404(Transaction, id=int(id), recipient=user)
 	transfer.recieved = True
 	transfer.save()
 	return return_to_previous(request)
