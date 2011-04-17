@@ -7,9 +7,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user
 
-
-import math
-from decimal import Decimal
 import time
 
 
@@ -100,7 +97,7 @@ def purchase_add_submit(request):
 	                    purchaser=UserProfile.objects.get(id=int(request.POST["purchaser"])))
 	purchase.save()
 	for user in UserProfile.objects.all():
-		ammount = int(Decimal(request.REQUEST["w_%s_t" % user.id]) * 100)
+		ammount = money_parse(request.REQUEST["w_%s_t" % user.id])
 		ao = AmmountOwed(user=user, purchase=purchase, ammount=ammount)
 		ao.save()
 	return return_to_previous(request)
