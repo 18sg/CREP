@@ -85,7 +85,7 @@ Table.prototype = {
 			totals[y] = this.get_input("t_" + y);
 			totals[0] -= totals[y];
 		}
-		$("t_0").innerText = this.format_num(totals[0]);
+		$("t_0").update(this.format_num(totals[0]));
 		
 		for (y = 0; y <= this.width; y++)
 		{
