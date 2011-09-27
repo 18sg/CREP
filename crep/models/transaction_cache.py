@@ -5,9 +5,10 @@ from django.dispatch import receiver
 from crep.models.core import *
 from crep.models.variable import Variable
 import optimise
+from crep.models.transaction import TransactionFormatMixin
 
 
-class TransactionCache(models.Model):
+class TransactionCache(models.Model, TransactionFormatMixin):
 	sender = models.ForeignKey(UserProfile, 
 	                           related_name="transaction_cache_sent")
 	recipient = models.ForeignKey(UserProfile, 
@@ -26,11 +27,6 @@ class TransactionCache(models.Model):
 			                      ammount=ammount)
 			t.save()
 		
-	def __unicode__(self):
-		return u"%s from %s to %s" % (money_format(self.ammount),
-		                              self.sender.name,
-		                              self.recipient.name)
-	
 	class Meta:
 		app_label="crep"
 

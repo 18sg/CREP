@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 from crep.money import money_format
-
+from crep.models.transaction import TransactionFormatMixin
 
 
 class UserProfile(models.Model):
@@ -33,6 +33,16 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return unicode(self.user)
 	
+	@property
+	def status(self):
+		ammount_owed = self.ammount_owed_current
+		if ammount_owed > 0:
+			return u"You are owed %s." % money_format(ammount_owed)
+		if ammount_owed < 0:
+			return u"You owe %s." % money_format(-ammount_owed)
+		else:
+			return u"You are even."
+	
 	class Meta:
 		app_label="crep"
 
@@ -42,7 +52,7 @@ def make_user_profile(sender, instance, signal, *args, **kwargs):
 
 
 
-class Transaction(models.Model):
+class Transaction(models.Model, TransactionFormatMixin):
 	sender = models.ForeignKey(UserProfile, 
 	                           related_name="transactions_sent")
 	recipient = models.ForeignKey(UserProfile, 
@@ -50,11 +60,6 @@ class Transaction(models.Model):
 	sent = models.BooleanField()
 	recieved = models.BooleanField()
 	ammount = models.IntegerField()
-	
-	def __unicode__(self):
-		return u"%s from %s to %s" % (money_format(self.ammount),
-		                              self.sender.name,
-		                              self.recipient.name)
 	
 	class Meta:
 		app_label="crep"
