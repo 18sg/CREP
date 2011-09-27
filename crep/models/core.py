@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from crep.money import money_format
 from crep.models.transaction import TransactionFormatMixin
 
+def query_sum(query, field):
+	result = query.aggregate(s=Sum(field))["s"]
+	return result if result is not None else 0
 
 class UserProfile(models.Model):
 	
@@ -19,16 +22,16 @@ class UserProfile(models.Model):
 	
 	@property
 	def ammount_owed(self):
-		return (AmmountOwed.objects
-		                    .filter(purchase__purchaser=self)
-		                    .aggregate(s=Sum("ammount"))["s"]
-		        - self.ammounts_owed.aggregate(s=Sum("ammount"))["s"])
+		# The AmmountOwed objects corresponding to the things this user bought.
+		bought = AmmountOwed.objects.filter(purchase__purchaser=self)
+		return (query_sum(bought, "ammount")
+		        - query_sum(self.ammounts_owed, "ammount"))
 	
 	@property
 	def ammount_owed_current(self):
 		return (self.ammount_owed 
-		        - self.transactions_recieved.aggregate(s=Sum("ammount"))["s"]
-		        + self.transactions_sent.aggregate(s=Sum("ammount"))["s"])
+		        - query_sum(self.transactions_recieved, "ammount")
+		        + query_sum(self.transactions_sent, "ammount"))
 	
 	def __unicode__(self):
 		return unicode(self.user)
@@ -73,7 +76,7 @@ class Purchase(models.Model):
 	
 	@property
 	def total(self):
-		return self.ammounts.aggregate(s=Sum("ammount"))["s"]
+		return query_sum(self.ammounts, "ammount")
 	
 	def __unicode__(self):
 		return u"%s for %s by %s" % (self.title,
