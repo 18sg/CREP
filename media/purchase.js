@@ -56,10 +56,10 @@ Table.prototype = {
 			new_td.insert({after: make_elem(row.id, this.width)});
 		}, this);
 		
-		var new_math = new Element("td").update("+");
-		var new_input = new Element("td", {"class": "t"}).update(
+		var new_math = new Element("th").update("+");
+		var new_input = new Element("th", {"class": "t"}).update(
 			new Element("input", {id: "t_" + this.width, value: "0"}));
-		$$("td.t").last().insert({after: new_math});
+		$$("th.t").last().insert({after: new_math});
 		new_math.insert({after: new_input});
 		
 		this.setup_events();

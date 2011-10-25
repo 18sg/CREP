@@ -5,10 +5,13 @@
 	<script src="/site_media/purchase.js" type="application/javascript" > </script>
 	<link rel="stylesheet" href="/site_media/purchase.css" type="text/css" media="all" /> 
 {% endblock %}
+
+{% block add_purchase %}active{% endblock %}
+
 {% block content %}
-<a href="/">Home</a>
 <form id="add_purchase_form" action="submit/" method="post">
 	{% csrf_token %}
+	<fieldset>
 	<!--
 	<p>
 		<label for="title">Title:</label>
@@ -19,47 +22,55 @@
 		<textarea name="description" id="description" rows="10" cols="40"></textarea>
 	</p>
 	-->
-	<p>
+	<div class="clearfix">
 		<label for="purchaser">Purchaser:</label>
-		<select name="purchaser" id="purchaser" size="1" >
-			{% for user in users %}
-				<option value="{{user.id}}">{{user.name}}</option>
-			{% endfor %}
-		</select>
-	</p>
-	<table id="table">
-		<colgroup>
-			<col class="name" />
-			<col class="subtotal" />
-			<col class="math" />
-			<col class="value" />
-			<col class="math" />
-			<col class="value" />
-			<col class="math" />
-			<col class="total" />
-		</colgroup>
-		<thead>
-			<tr>
-				<td/>
-				<td class="t" id="t_0" > x </td>
-				<td> = </td>
-				<td> <input id="t_t" value="0" /> </td>
-			</tr>
-		</thead>
-		<tbody>
-			{% for user in users %}
-				<tr class="w {% cycle 'odd' 'even' %}" id="w_{{user.id}}" >
-					<td> {{ user.name }} </td>
-					<td class="w"> <input id="w_{{ user.id }}_0" value="1" /> </td>
-					<td/>
-					<td class="total"> <input id="w_{{ user.id }}_t" name="w_{{ user.id }}_t" /> </td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<p>
-		<button id="add_col" type="button" > Add Column </button>
-		<input type="submit" />
-	</p>
+		<div class="input">
+			<select name="purchaser" id="purchaser" size="1" >
+				{% for user in users %}
+					<option value="{{user.id}}">{{user.name}}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="clearfix">
+		<label>Ammounts:</label>
+		<div class="input">
+			<table id="table">
+				<colgroup>
+					<col class="name" />
+					<col class="subtotal" />
+					<col class="math" />
+					<col class="value" />
+					<col class="math" />
+					<col class="value" />
+					<col class="math" />
+					<col class="total" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th/>
+						<th class="t" id="t_0" > x </td>
+						<th> = </td>
+						<th> <input id="t_t" value="0" /> </td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+						<tr class="w {% cycle 'odd' 'even' %}" id="w_{{user.id}}" >
+							<td> {{ user.name }} </td>
+							<td class="w"> <input id="w_{{ user.id }}_0" value="1" /> </td>
+							<td/>
+							<td class="total"> <input id="w_{{ user.id }}_t" name="w_{{ user.id }}_t" /> </td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="actions">
+		<input type="submit" class="btn primary" />
+		<button id="add_col" type="button" class="btn"> Add Column </button>
+	</div>
+	</fieldset>
 </form>
 {% endblock %}

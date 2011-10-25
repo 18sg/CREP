@@ -1,61 +1,88 @@
 {% extends "crep/base.html" %}
 {% load money %}
 
+{% block home %}active{% endblock %}
+
 {% block content %}
-<p>
-	Why not <a href="{% url crep.views.purchase_add %}">add a purchase</a>?
-</p>
-<p>
-	{{user.status}}
-</p>
+	<p>
+		{{user.status}}
+	</p>
 
-<form action="{% url crep.views.add_transfer %}" method="post">
-	{% csrf_token %}
-	<input type="hidden" name="unit" value="pounds" />
-	I have transfered £<input name="ammount" type="text"/> to 
-	<select name="to">
-		{% for user in users %}
-			<option value="{{user.id}}">{{user.name}}</option>
-		{% endfor %}
-	</select>.
-	<input type="submit" />
-</form>
 
-<h2>suggested transfers</h2>
-<h3>from you</h3>
-<ul>
-	{% for transfer in suggested_from_transfers %}
-		<li>{{transfer.format_sender}}
-			<a href="{% url crep.views.add_transfer %}?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}">done</a>
-		</li>
-	{% endfor %}
-</ul>
+<h2>Transfers</h2>
 
-<h3>to you</h3>
-<ul>
-	{% for transfer in suggested_to_transfers %}
-		<li>{{transfer.format_receiver}}</li>
-	{% endfor %}
-</ul>
+<div class="row">
+	<div class="span8">
+		<h3>From You</h3>
+		<h4>Pending</h4>
+		<ul>
+			{% for transfer in from_transfers %}
+			<li>{{transfer.format_sender}}
+			<a href="{% url crep.views.cancel_transfer transfer.id %}" class="btn danger small">cancel</a>
+			</li>
+			{% endfor %}
+		</ul>
+		<h4>Suggested</h4>
+		<ul>
+			{% for transfer in suggested_from_transfers %}
+			<li>{{transfer.format_sender}}
+			<a href="{% url crep.views.add_transfer %}?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}" class="btn small danger">done</a>
+			</li>
+			{% endfor %}
+		</ul>
 
-<h2>pending transfers</h2>
-<h3>from you</h3>
-<ul>
-	{% for transfer in from_transfers %}
-		<li>{{transfer.format_sender}}
-			<a href="{% url crep.views.cancel_transfer transfer.id %}">cancel</a>
-		</li>
-	{% endfor %}
-</ul>
+		<form action="{% url crep.views.add_transfer %}" method="post">
+			{% csrf_token %}
+			<fieldset>
+				<legend>Add another Transfer</legend>
+				<input type="hidden" name="unit" value="pounds" />
 
-<h3>to you</h3>
-<ul>
-	{% for transfer in to_transfers %}
-		<li>{{transfer.format_receiver}}
-			<a href="{% url crep.views.confirm_transfer transfer.id %}">confirm</a>
-		</li>
-	{% endfor %}
-</ul>
+				<div class="clearfix">
+					<label for="ammount">Ammount</label>
+					<div class="input">
+						<div class="input-prepend">
+							<span class="add-on">£</span>
+							<input name="ammount" type="text" class="mini"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="clearfix">
+					<label for="to">Recipient</label>
+					<div class="input">
+						<select name="to">
+							{% for user in users %}
+							<option value="{{user.id}}">{{user.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="actions">
+					<input type="submit" class="btn primary" />
+				</div>
+			</fieldset>
+		</form>
+
+	</div>
+
+	<div class="span8">
+		<h3>To You</h3>
+		<h4>Pending</h4>
+		<ul>
+			{% for transfer in to_transfers %}
+			<li>{{transfer.format_receiver}}
+			<a href="{% url crep.views.confirm_transfer transfer.id %}" class="btn small success">confirm</a>
+			</li>
+			{% endfor %}
+		</ul>
+		<h4>Suggested</h4>
+		<ul>
+			{% for transfer in suggested_to_transfers %}
+			<li>{{transfer.format_receiver}}</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
 
 
 {% endblock %}

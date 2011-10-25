@@ -1,11 +1,35 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-    <html lang="en">
-    <head>
-        <title>{% block title %}{% endblock %}</title>
-        {% block extrahead %}{% endblock %}
-    </head>
-    <body>
-        <h1 id="top">{% block headline %}{% endblock %}</h1>
-        {% block content %}{% endblock %}
-    </body>
-    </html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="/site_media/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+    {% block extrahead %}{% endblock %}
+  </head>
+  <body>
+		<div class="topbar">
+			<div class="fill">
+				<div class="container">
+					<a class="brand" href="/">CREP</a>
+					<ul class="nav">
+						<li class="{% block home %}{% endblock %}">
+							<a href="/">Home</a></li>
+						<li class="{% block add_purchase %}{% endblock %}">
+							<a href="{% url crep.views.purchase_add %}">Add Purchase</a></li>
+						<li class="{% block optimal_transfers %}{% endblock %}">
+							<a href="{% url crep.views.optimal_transfers %}">Optimal Transfers</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+    		<h1 id="top">{% block headline %}{% endblock %}</h1>
+    		{% block content %}{% endblock %}
+		</div>
+  </body>
+</html>
