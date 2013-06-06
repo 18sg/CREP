@@ -18,7 +18,7 @@
 		<ul>
 			{% for transfer in from_transfers %}
 			<li>{{transfer.format_sender}}
-			<a href="{% url crep.views.cancel_transfer transfer.id %}" class="btn danger small">cancel</a>
+			<a href="{% url 'crep.views.cancel_transfer' transfer.id %}" class="btn danger small">cancel</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -26,12 +26,12 @@
 		<ul>
 			{% for transfer in suggested_from_transfers %}
 			<li>{{transfer.format_sender}}
-			<a href="{% url crep.views.add_transfer %}?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}" class="btn small danger">done</a>
+			<a href="{% url 'crep.views.add_transfer' %}?to={{transfer.recipient.id}}&ammount={{transfer.ammount}}" class="btn small danger">done</a>
 			</li>
 			{% endfor %}
 		</ul>
 
-		<form action="{% url crep.views.add_transfer %}" method="post">
+		<form action="{% url 'crep.views.add_transfer' %}" method="post">
 			{% csrf_token %}
 			<fieldset>
 				<legend>Add another Transfer</legend>
@@ -71,7 +71,7 @@
 		<ul>
 			{% for transfer in to_transfers %}
 			<li>{{transfer.format_receiver}}
-			<a href="{% url crep.views.confirm_transfer transfer.id %}" class="btn small success">confirm</a>
+			<a href="{% url 'crep.views.confirm_transfer' transfer.id %}" class="btn small success">confirm</a>
 			</li>
 			{% endfor %}
 		</ul>

@@ -19,9 +19,9 @@
 						<li class="{% block home %}{% endblock %}">
 							<a href="/">Home</a></li>
 						<li class="{% block add_purchase %}{% endblock %}">
-							<a href="{% url crep.views.purchase_add %}">Add Purchase</a></li>
+							<a href="{% url 'crep.views.purchase_add' %}">Add Purchase</a></li>
 						<li class="{% block optimal_transfers %}{% endblock %}">
-							<a href="{% url crep.views.optimal_transfers %}">Optimal Transfers</a></li>
+							<a href="{% url 'crep.views.optimal_transfers' %}">Optimal Transfers</a></li>
 					</ul>
 				</div>
 			</div>
